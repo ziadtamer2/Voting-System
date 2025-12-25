@@ -200,6 +200,7 @@ private:
 public:
     vector<Election>& getElections() { return elections; }
     vector<User*>& getUsers() { return users; }
+    vector<Vote>& getVotes() { return votes; }
 
     void fillDate()
 {
@@ -410,7 +411,20 @@ void Candidate::viewMyElections()
 }
 
 
-
+void Candidate::viewVoteCount(int electionId)
+{
+    int count = 0;
+    for (const Vote &v : system->getVotes())
+    {
+        if (v.getElectionId() == electionId &&
+            v.getVoterId() == userId)
+        {
+            count++;
+        }
+    }
+    cout << "Total votes received in Election " << electionId
+         << ": " << count << endl;
+}
 /* ---------- main ---------- */
 int main()
 {
@@ -445,6 +459,17 @@ int main()
         existingCandidate->login();          // test login
         existingCandidate->viewMyElections();// test elections
         existingCandidate->logout();         // test logout
+        for (Election& e : system.getElections())
+        {
+            vector<int> candidates = e.getCandidates();
+            for (int cid : candidates)
+            {
+                if (cid == existingCandidate->getUserId())
+                {
+                    cout << "\nViewing vote count for Election ID: " << e.getElectionId() << " : "<< e.getElectionId() << endl;
+                }
+            }
+        }
     }
 
     cout << "\n===== TEST: Candidate Registration =====\n";
