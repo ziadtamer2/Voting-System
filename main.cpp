@@ -111,7 +111,7 @@ public:
     string getEmail() const { return email; }
 };
 
-/* ---------- Guest ---------- */
+/* ---------- Guest ---------- */ //tamer, mo3tasam
 class Guest
 {
 private:
@@ -120,80 +120,11 @@ private:
 public:
     Guest(VotingSystem* sys) : system(sys) {}
 
-    void viewElections()
-    {cout << "===== Available Elections =====\n";
-    for (const Election& e : system->getElections())
-    {
-        cout << "ID: " << e.getElectionId()
-             << " | Title: " << e.getTitle()
-             << " | Status: ";
+    void viewElections();
 
-        if (e.getStatus() == ElectionStatus::CREATED)
-            cout << "Created";
-        else if (e.getStatus() == ElectionStatus::OPENED)
-            cout << "Opened";
-        else
-            cout << "Closed";
+    void viewElectionDetails(int electionId);
 
-        cout << endl;
-    }
-    }
-    void viewElectionDetails(int electionId)
-    {for (const Election& e : system->getElections())
-    {
-        if (e.getElectionId() == electionId)
-        {
-            cout << "===== Election Details =====\n";
-            cout << "Title: " << e.getTitle() << endl;
-            cout << "Description: " << e.getDescription() << endl;
-            cout << "Status: ";
-
-            if (e.getStatus() == ElectionStatus::CREATED)
-                cout << "Created";
-            else if (e.getStatus() == ElectionStatus::OPENED)
-                cout << "Opened";
-            else
-                cout << "Closed";
-
-            cout << endl;
-            return;
-        }
-    }
-    cout << "Election not found.\n";
-    }
-    void viewCandidates(int electionId)
-    {
-        bool electionFound = false;
-
-        for (const Election& e : system->getElections())
-        {
-            if (e.getElectionId() == electionId)
-            {
-                electionFound = true;
-                cout << "Candidates for Election: " << e.getTitle() << "\n";
-
-                for (int candidateId : e.getCandidates())
-                {
-                    for (User* u : system->getUsers())
-                    {
-                        if (u->getUserId() == candidateId &&
-                            u->getRole() == "Candidate")
-                        {
-                            cout << "- Candidate ID: " << u->getUserId()
-                                 << ", Username: " << u->getUsername()
-                                 << ", Email: " << u->getEmail() << endl;
-                        }
-                    }
-                }
-                return;
-            }
-        }
-
-        if (!electionFound)
-        {
-            cout << "Election with ID " << electionId << " not found.\n";
-        }
-    }
+    void viewCandidates(int electionId);
     void viewVotingRules()
     {
         cout << "\n===== Voting Rules =====\n";
@@ -261,103 +192,15 @@ public:
 
     string getRole() const override { return "Admin"; }
 
-    void createElection()
-    {
-        int id;
-        cout << "Enter Election ID: ";
-        cin >> id;
+    void createElection();
 
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // to ignore leftover newline or any extra input
 
-        for (const Election &e : system->getElections())
-        {
-            if (e.getElectionId() == id)
-            {
-                cout << "Election ID already exists.\n";
-                return;
-            }
-        }
-        string title, description;
+    void updateElection(int electionId);
 
-        cout << "Enter Election Title: ";
-        getline(cin, title);
+    void openElection(int electionId);
 
-        cout << "Enter Election Description: ";
-        getline(cin, description);
+    void closeElection(int electionId);
 
-        system->getElections().emplace_back(id, title, description); // this will call Election constructor
-        cout << "Election has been created successfully.\n";
-    }
-    void updateElection(int electionId)
-    {
-        for (Election &e : system->getElections())
-        {
-            if (e.getElectionId() == electionId)
-            {
-                string newTitle, newDescription;
-                cout << "Current title: " << e.getTitle() << endl;
-                cout << "Enter new title (or press Enter to keep current): ";
-
-                getline(cin, newTitle);
-                if (!newTitle.empty())
-                {
-                    e.setTitle(newTitle); // updating via setter more safe than direct access via friendship
-                }
-
-                cout << "Current description: " << e.getDescription() << endl;
-                cout << "Enter new description (or press Enter to keep current): ";
-                getline(cin, newDescription);
-                if (!newDescription.empty())
-                {
-                    e.setDescription(newDescription); // updating via setter more safe than direct access via friendship
-                }
-
-                cout << "Election has been updated successfully." << endl;
-                return;
-            }
-        }
-        cout << "Election with ID " << electionId << " not found." << endl;
-    }
-    void openElection(int electionId)
-    {
-        for (Election &e : system->getElections())
-        {
-            if (e.getElectionId() == electionId)
-            {
-                if (e.getStatus() == ElectionStatus::CREATED)
-                {
-                    e.open();
-                    cout << "Election " << electionId << " is now open for voting." << endl;
-                }
-                else
-                {
-                    cout << "Election " << electionId << " is already " << (e.getStatus() == ElectionStatus::OPENED ? "open" : "closed") << "." << endl;
-                }
-                return;
-            }
-        }
-        cout << "Election with ID " << electionId << " not found." << endl;
-    }
-    void closeElection(int electionId)
-    {
-        for (Election &e : system->getElections())
-        {
-            if (e.getElectionId() == electionId)
-            {
-                if (e.getStatus() == ElectionStatus::OPENED)
-                {
-                    e.close();
-                    cout << "Election " << electionId << " has been closed successfully." << endl;
-                }
-                else
-                {
-                    cout << "Election " << electionId << " is already " << (e.getStatus() == ElectionStatus::CLOSED ? "closed" : "not yet open") << "." << endl;
-                }
-                return;
-            }
-        }
-        cout << "Election with ID " << electionId << " not found." << endl;
-    }
 
     void addCandidate(int electionId, int candidateId);
     void removeCandidate(int electionId, int candidateId);
@@ -451,6 +294,7 @@ public:
     void adminMenu(Admin* admin) {}
 };
 
+//////////////////////////////
 /* ---------- User method implementation ---------- */
 void User::viewElections()
 {
@@ -461,6 +305,7 @@ void User::viewElections()
     }
 }
 
+///////////////////////////////
 /*Admin methods implementation */
 void Admin::addCandidate(int electionId, int candidateId)
 {
@@ -560,10 +405,188 @@ void Admin::addCandidate(int electionId, int candidateId)
 
  }
 
+ void Admin::createElection()
+    {
+        int id;
+        cout << "Enter Election ID: ";
+        cin >> id;
 
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // to ignore leftover newline or any extra input
 
+        for (const Election &e : system->getElections())
+        {
+            if (e.getElectionId() == id)
+            {
+                cout << "Election ID already exists.\n";
+                return;
+            }
+        }
+        string title, description;
 
+        cout << "Enter Election Title: ";
+        getline(cin, title);
 
+        cout << "Enter Election Description: ";
+        getline(cin, description);
+
+        system->getElections().emplace_back(id, title, description); // this will call Election constructor
+        cout << "Election has been created successfully.\n";
+    }
+
+  void Admin::updateElection(int electionId)
+    {
+
+         for (Election &e : system->getElections())
+        {
+            if (e.getElectionId() == electionId)
+            {
+                string newTitle, newDescription;
+                cout << "Current title: " << e.getTitle() << endl;
+                cout << "Enter new title (or press Enter to keep current): ";
+
+                getline(cin, newTitle);
+                if (!newTitle.empty())
+                {
+                    e.setTitle(newTitle); // updating via setter more safe than direct access via friendship
+                }
+
+                cout << "Current description: " << e.getDescription() << endl;
+                cout << "Enter new description (or press Enter to keep current): ";
+                getline(cin, newDescription);
+                if (!newDescription.empty())
+                {
+                    e.setDescription(newDescription); // updating via setter more safe than direct access via friendship
+                }
+
+                cout << "Election has been updated successfully." << endl;
+                return;
+            }
+        }
+        cout << "Election with ID " << electionId << " not found." << endl;
+    }
+  void Admin::openElection(int electionId)
+    {
+         for (Election &e : system->getElections())
+        {
+            if (e.getElectionId() == electionId)
+            {
+                if (e.getStatus() == ElectionStatus::CREATED)
+                {
+                    e.open();
+                    cout << "Election " << electionId << " is now open for voting." << endl;
+                }
+                else
+                {
+                    cout << "Election " << electionId << " is already " << (e.getStatus() == ElectionStatus::OPENED ? "open" : "closed") << "." << endl;
+                }
+                return;
+            }
+        }
+        cout << "Election with ID " << electionId << " not found." << endl;
+    }
+
+void Admin::closeElection(int electionId)
+    {
+        for (Election &e : system->getElections())
+        {
+            if (e.getElectionId() == electionId)
+            {
+                if (e.getStatus() == ElectionStatus::OPENED)
+                {
+                    e.close();
+                    cout << "Election " << electionId << " has been closed successfully." << endl;
+                }
+                else
+                {
+                    cout << "Election " << electionId << " is already " << (e.getStatus() == ElectionStatus::CLOSED ? "closed" : "not yet open") << "." << endl;
+                }
+                return;
+            }
+        }
+        cout << "Election with ID " << electionId << " not found." << endl;
+    }
+//////////////////////////////////////
+ /*Guest  methods implementation*/
+ void Guest::viewElections()
+    {
+
+        cout << "===== Available Elections =====\n";
+    for (const Election& e : system->getElections())
+        {
+        cout << "ID: " << e.getElectionId()
+             << " | Title: " << e.getTitle()
+             << " | Status: ";
+
+        if (e.getStatus() == ElectionStatus::CREATED)
+            cout << "Created";
+        else if (e.getStatus() == ElectionStatus::OPENED)
+            cout << "Opened";
+        else
+            cout << "Closed";
+
+        cout << endl;
+        }
+    }
+void Guest::viewElectionDetails(int electionId)
+    {
+    for (const Election& e : system->getElections())
+    {
+        if (e.getElectionId() == electionId)
+        {
+            cout << "===== Election Details =====\n";
+            cout << "Title: " << e.getTitle() << endl;
+            cout << "Description: " << e.getDescription() << endl;
+            cout << "Status: ";
+
+            if (e.getStatus() == ElectionStatus::CREATED)
+                cout << "Created";
+            else if (e.getStatus() == ElectionStatus::OPENED)
+                cout << "Opened";
+            else
+                cout << "Closed";
+
+            cout << endl;
+            return;
+        }
+
+    cout << "Election not found.\n";
+    }
+    }
+
+//void Guest::viewCandidates(int electionId) // tamer , mo3tasem 
+//    {
+//        bool electionFound = false;
+//
+//        for (const Election& e : system->getElections())
+//        {
+//            if (e.getElectionId() == electionId)
+//            {
+//                electionFound = true;
+//                cout << "Candidates for Election: " << e.getTitle() << "\n";
+//
+//                for (int candidateId : e.getCandidates())
+//                {
+//                    for (User* u : system->getUsers())
+//                    {
+//                        if (u->getUserId() == candidateId &&
+//                            u->getRole() == "Candidate")
+//                        {
+//                            cout << "- Candidate ID: " << u->getUserId()
+//                                 << ", Username: " << u->getUsername()
+//                                 << ", Email: " << u->getEmail() << endl;
+//                        }
+//                    }
+//                }
+//                return;
+//            }
+//        }
+//
+//        if (!electionFound)
+//        {
+//            cout << "Election with ID " << electionId << " not found.\n";
+//        }
+//    }
+  ///////////////////////////////////////////
 /*---  candidate methods implementation */
 void Candidate::login()
 {
