@@ -149,8 +149,49 @@ public:
     }
     cout << "Election not found.\n";
     }
-    void viewCandidates(int electionId) {}
-    void viewVotingRules() {}
+    void viewCandidates(int electionId)
+    {
+        bool electionFound = false;
+
+        for (const Election& e : system->getElections())
+        {
+            if (e.getElectionId() == electionId)
+            {
+                electionFound = true;
+                cout << "Candidates for Election: " << e.getTitle() << "\n";
+
+                for (int candidateId : e.getCandidates())
+                {
+                    for (User* u : system->getUsers())
+                    {
+                        if (u->getUserId() == candidateId &&
+                            u->getRole() == "Candidate")
+                        {
+                            cout << "- Candidate ID: " << u->getUserId()
+                                 << ", Username: " << u->getUsername()
+                                 << ", Email: " << u->getEmail() << endl;
+                        }
+                    }
+                }
+                return;
+            }
+        }
+
+        if (!electionFound)
+        {
+            cout << "Election with ID " << electionId << " not found.\n";
+        }
+    }
+    void viewVotingRules()
+    {
+        cout << "\n===== Voting Rules =====\n";
+        cout << "1. Each voter can vote only once per election.\n";
+        cout << "2. Voting is allowed only when the election is OPEN.\n";
+        cout << "3. Votes cannot be changed after submission.\n";
+        cout << "4. Banned users are not allowed to vote.\n";
+        cout << "5. Candidates cannot vote in elections they participate in.\n";
+        cout << "========================\n";
+    }
 };
 
 /* ---------- Voter ---------- */
