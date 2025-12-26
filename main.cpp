@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <Limits>
 
 using namespace std;
 
@@ -107,8 +108,47 @@ private:
 public:
     Guest(VotingSystem* sys) : system(sys) {}
 
-    void viewElections() {}
-    void viewElectionDetails(int electionId) {}
+    void viewElections()
+    {cout << "===== Available Elections =====\n";
+    for (const Election& e : system->getElections())
+    {
+        cout << "ID: " << e.getElectionId()
+             << " | Title: " << e.getTitle()
+             << " | Status: ";
+
+        if (e.getStatus() == ElectionStatus::CREATED)
+            cout << "Created";
+        else if (e.getStatus() == ElectionStatus::OPENED)
+            cout << "Opened";
+        else
+            cout << "Closed";
+
+        cout << endl;
+    }
+    }
+    void viewElectionDetails(int electionId)
+    {for (const Election& e : system->getElections())
+    {
+        if (e.getElectionId() == electionId)
+        {
+            cout << "===== Election Details =====\n";
+            cout << "Title: " << e.getTitle() << endl;
+            cout << "Description: " << e.getDescription() << endl;
+            cout << "Status: ";
+
+            if (e.getStatus() == ElectionStatus::CREATED)
+                cout << "Created";
+            else if (e.getStatus() == ElectionStatus::OPENED)
+                cout << "Opened";
+            else
+                cout << "Closed";
+
+            cout << endl;
+            return;
+        }
+    }
+    cout << "Election not found.\n";
+    }
     void viewCandidates(int electionId) {}
     void viewVotingRules() {}
 };
@@ -533,6 +573,23 @@ int main()
 {
     VotingSystem system;
     system.fillDate();   // IMPORTANT
+    cout << "\n===== TEST: Guest View Elections =====\n";
+
+    Guest guest(&system);
+
+    // test view all elections
+    guest.viewElections();
+
+    cout << "\n===== TEST: Guest View Election Details (Election ID = 1) =====\n";
+
+    // test view election details
+    guest.viewElectionDetails(1);
+
+    cout << "\n===== TEST: Guest View Election Details (Invalid ID) =====\n";
+
+    // test invalid election
+    guest.viewElectionDetails(999);
+
     // display all users
     cout << "===== All Users in System =====\n";
     for (User* u : system.getUsers())
