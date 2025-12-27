@@ -637,8 +637,8 @@ void Guest::viewElections()
     for (const Election &e : system->getElections())
     {
         cout << "ID: " << e.getElectionId()
-             << " | Title: " << e.getTitle()
-             << " | Status: ";
+             << "  Title: " << e.getTitle()
+             << "  Status: ";
 
         if (e.getStatus() == ElectionStatus::CREATED)
             cout << "Created";
@@ -672,8 +672,9 @@ void Guest::viewElectionDetails(int electionId)
             return;
         }
 
-        cout << "Election not found.\n";
+
     }
+     cout << "Election not found.\n";
 }
 
 // void Guest::viewCandidates(int electionId) // tamer , mo3tasem
@@ -754,11 +755,15 @@ void Candidate::viewVoteCount(int electionId)
     cout << "Total votes received in Election " << electionId
          << ": " << count << endl;
 }
+void testGuest(VotingSystem& system);
+
 /* ---------- main ---------- */
 int main()
 {
     VotingSystem system;
     system.fillDate(); // IMPORTANT
+    testGuest(system);//test
+
     cout << "\n===== TEST: ensure if admins created sucessfully =====\n";
     for (User *u : system.getUsers())
     {
@@ -869,28 +874,32 @@ int main()
             }
         }
     }
-    // cout << "\n===== TEST: Guest View Elections =====\n";
 
-    Guest guest(&system);
-
-    // // test view all elections
-    guest.viewElections();
-
-    // cout << "\n===== TEST: Guest View Election Details (Election ID = 1) =====\n";
-
-    // // test view election details
-    guest.viewElectionDetails(1);
-
-    // cout << "\n===== TEST: Guest View Election Details (Invalid ID) =====\n";
-
-    // // test invalid election
-    guest.viewElectionDetails(999);
 
     TestCandidate(system);
 
     return 0;
 }
 
+void testGuest(VotingSystem& system) //Mo3tasem
+{
+    cout << "\n===== TEST: Guest View Elections =====\n";
+
+    Guest guest(&system);
+
+    // Test view all elections
+    guest.viewElections();
+
+    cout << "\n===== TEST: Guest View Election Details (Election ID = 1) =====\n";
+
+    // Test valid election
+    guest.viewElectionDetails(1);
+
+    cout << "\n===== TEST: Guest View Election Details (Invalid ID) =====\n";
+
+    // Test invalid election
+    guest.viewElectionDetails(999);
+}
 
 void TestCandidate(VotingSystem &system) // Youssef Wagih
 {
