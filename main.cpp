@@ -302,6 +302,10 @@ public:
 };
 
 //////////////////////////////
+
+/* ---------- Test Cases ---------- */
+void TestCandidate(VotingSystem &system);
+
 /* ---------- User method implementation ---------- */
 void User::viewElections()
 {
@@ -881,8 +885,18 @@ int main()
     // // test invalid election
     guest.viewElectionDetails(999);
 
-    // // display all users
-    // cout << "===== All Users in System =====\n";
+    TestCandidate(system);
+
+    return 0;
+}
+
+
+void TestCandidate(VotingSystem &system) // Youssef Wagih
+{
+    cout<<"\n\n===== TEST CASES FOR CANDIDATE =====\n";
+    cout << "\n===== TEST: Display All Users =====\n";
+    // display all users
+    cout << "===== All Users in System =====\n";
     for (User *u : system.getUsers())
     {
         cout << "UserID: " << u->getUserId()
@@ -891,7 +905,7 @@ int main()
              << ", password: " << u->getPassword()
              << ", Role: " << u->getRole() << endl;
     }
-    // cout << "===== TEST: Candidate Login (Existing) =====\n";
+    cout << "===== TEST: Candidate Login (Existing) =====\n";
 
     // // Existing candidate (from fillDate)
     Candidate *existingCandidate = nullptr;
@@ -934,6 +948,4 @@ int main()
     newCandidate->login();
 
     cout << "\n===== TEST COMPLETE =====\n";
-
-    return 0;
 }
